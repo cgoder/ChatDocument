@@ -1,12 +1,14 @@
-openai
-tiktoken
-langchain==0.0.154
 python-dotenv==1.0.0
 streamlit==1.18.1
-faiss-cpu==1.7.4
-PyPDF2==3.0.1
-pandoc==2.3
-ebooklib==0.18
-chardet==5.1.0
-bs4==0.0.1
+openai
+tiktoken
+langchain
+# faiss-cpu==1.7.4
+# pandoc==2.3
+# chardet==5.1.0
+# bs4==0.0.1
 chromadb==0.3.21
+altair==4.2.2
+unstructured
+tabulate
+pypdf
