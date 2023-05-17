@@ -165,7 +165,7 @@ def load_openAILLM():
 def load_azureLLM():
     os.environ["OPENAI_API_TYPE"] = "azure"
     os.environ["OPENAI_API_BASE"] = os.environ['API_BASE']
-    os.environ["OPENAI_SUBSCRIPTION_KEY"] = os.environ['API_KEY']
+    os.environ["OPENAI_API_KEY"] = os.environ['API_KEY']
     AZURE_DEPLOYMENT_NAME = os.environ['DEPLOYMENT_NAME_CHAT']
     AZURE_DEPLOYMENT_NAME_EMBEDDING = os.environ['DEPLOYMENT_NAME_EMBEDDING']
 
@@ -211,6 +211,10 @@ def chatbot(chat,embedding):
     st.markdown("# 交流")
 
     vectorstore = load_vectorDB(embedding)
+    # if vectorstore.vector_count() == 0:
+    #     st.error("请先上传资料")
+    #     if st.button("跳转到上传页面"):
+    #         st.experimental_rerun()
 
     # qa_chain = load_QA(chat)
     qa_chain = load_qa_chain(chat, chain_type="stuff")
@@ -221,13 +225,15 @@ def chatbot(chat,embedding):
 
         # 在向量数据库中查找相似度最高的TopN结果
         docs = vectorstore.similarity_search(user_input)
-        with get_openai_callback() as cb:
-            response = qa_chain.run(input_documents=docs, question=user_input)
-            # print(cb)
+        # with get_openai_callback() as cb:
+        #     response = qa_chain.run(input_documents=docs, question=user_input)
+        #     # print(cb)
         
-        ## 回显
-        st.write(response)
-        st.write(cb)
+        # ## 回显
+        # st.write(response)
+        # st.write(cb)
+
+        st.write(docs)
 
 def model():
     st.markdown("# 模型")
@@ -245,6 +251,7 @@ def model():
     return chat,embedding
 
 def main():
+    load_dotenv()
     st.set_page_config(page_title="ChatDocument", page_icon=":earth_asia:", layout="wide")
 
     st.sidebar.title("ChatDocument")
