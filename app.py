@@ -118,17 +118,20 @@ def load_vectorDB(embedding):
     if not os.path.exists(DB_DIR):
         os.mkdir(DB_DIR)
 
-    client_settings = chromadb.config.Settings(
-        chroma_db_impl="duckdb+parquet",
-        persist_directory=DB_DIR,
-        anonymized_telemetry=False,
-    )
-    vectorstore = Chroma(
-        collection_name=DB_VECTOR_NAME,
-        embedding_function=embedding,
-        client_settings=client_settings,
-        persist_directory=DB_DIR,
-    )
+    vectorstore = Chroma(DB_VECTOR_NAME, embedding.embed_query)
+
+
+    # client_settings = chromadb.config.Settings(
+    #     chroma_db_impl="duckdb+parquet",
+    #     persist_directory=DB_DIR,
+    #     anonymized_telemetry=False,
+    # )
+    # vectorstore = Chroma(
+    #     collection_name=DB_VECTOR_NAME,
+    #     embedding_function=embedding,
+    #     client_settings=client_settings,
+    #     persist_directory=DB_DIR,
+    # )
 
     return vectorstore
 
