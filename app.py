@@ -192,7 +192,7 @@ def load_azureLLM():
 
 
 def load_QA(chat):
-    qa_chain = load_qa_chain(chat, chain_type="stuff")
+    qa_chain = load_qa_chain(chat, chain_type="stuff",verbose=True)
 
     # ABS_PATH = os.path.dirname(os.path.abspath(__file__))
     # QA_DIR = os.path.join(ABS_PATH, "question_answering")
