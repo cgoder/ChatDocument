@@ -118,7 +118,9 @@ def load_vectorDB(embedding):
     if not os.path.exists(DB_DIR):
         os.mkdir(DB_DIR)
 
-    vectorstore = Chroma(DB_VECTOR_NAME, embedding.embed_query)
+    print(embedding)
+
+    vectorstore = Chroma(DB_VECTOR_NAME, embedding)
 
 
     # client_settings = chromadb.config.Settings(
