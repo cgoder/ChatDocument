@@ -78,12 +78,16 @@ def extract_file_content(file):
     if file_extension in loaders:
         documents = loaders[file_extension](temp_file_name)
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=CHUNK_SIZE,
-        chunk_overlap=CHUNK_OVERLAP,
-        length_function=len,
-    )
+    # text_splitter = RecursiveCharacterTextSplitter(
+    #     chunk_size=CHUNK_SIZE,
+    #     chunk_overlap=CHUNK_OVERLAP,
+    #     length_function=len,
+    # )
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
+    
     chunks = text_splitter.split_documents(documents)
+
+    st.write(chunks)
 
     temp_file.close()
     os.remove(temp_file_name)
@@ -118,9 +122,11 @@ def load_vectorDB(embedding):
     if not os.path.exists(DB_DIR):
         os.mkdir(DB_DIR)
 
-    print(embedding)
+    # print(embedding)
 
-    vectorstore = Chroma(DB_VECTOR_NAME, embedding)
+    vectorstore = Chroma(collection_name=DB_VECTOR_NAME,
+                         persist_directory=DB_DIR,
+                         embedding_function=embedding)
 
 
     # client_settings = chromadb.config.Settings(
@@ -214,12 +220,15 @@ def get_answer(question, context, qa_chain):
 
 def chatbot(chat,embedding):
     st.markdown("# 交流")
-
+    
     vectorstore = load_vectorDB(embedding)
-    # if vectorstore.vector_count() == 0:
-    #     st.error("请先上传资料")
-    #     if st.button("跳转到上传页面"):
-    #         st.experimental_rerun()
+
+    # from langchain.prompts import load_prompt
+    # from langchain.chains import VectorDBQA
+    # prompt = load_prompt('prompt.json')
+    # qa_chain = VectorDBQA.from_llm(chat, prompt=prompt, vectorstore=vectorstore)
+
+
 
     # qa_chain = load_QA(chat)
     qa_chain = load_qa_chain(chat, chain_type="stuff")
@@ -230,15 +239,15 @@ def chatbot(chat,embedding):
 
         # 在向量数据库中查找相似度最高的TopN结果
         docs = vectorstore.similarity_search(user_input)
-        # with get_openai_callback() as cb:
-        #     response = qa_chain.run(input_documents=docs, question=user_input)
-        #     # print(cb)
+        with get_openai_callback() as cb:
+            response = qa_chain.run(input_documents=docs, question=user_input)
+            # response = qa_chain.run(resource =docs, query=user_input)
         
         # ## 回显
-        # st.write(response)
-        # st.write(cb)
+        st.write(response)
+        st.write(cb)
 
-        st.write(docs)
+        # st.write(docs)
 
 def model():
     st.markdown("# 模型")
